@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block title %}تقارير المدير{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-chart-bar"></i> تقارير المدير</h3>
+                <a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary float-end"><i class="fas fa-arrow-left"></i> العودة</a>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card bg-info text-white">
+                            <div class="card-body">
+                                <h5 class="card-title">إجمالي الزبائن</h5>
+                                <p class="card-text">{{ customers|length }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-success text-white">
+                            <div class="card-body">
+                                <h5 class="card-title">إجمالي الإيرادات</h5>
+                                <p class="card-text">{{ "%.2f"|format(total_revenue) }} شيكل</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-warning text-white">
+                            <div class="card-body">
+                                <h5 class="card-title">الزبائن النشطين</h5>
+                                <p class="card-text">{{ customers|selectattr('status', 'equalto', 'active')|list|length }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-danger text-white">
+                            <div class="card-body">
+                                <h5 class="card-title">الزبائن المنتهين</h5>
+                                <p class="card-text">{{ customers|selectattr('status', 'equalto', 'ended')|list|length }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <h4>تقرير المدفوعات</h4>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>الزبون</th>
+                            <th>المبلغ</th>
+                            <th>التاريخ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for payment in payments %}
+                        <tr>
+                            <td>{{ payment.customer.name }}</td>
+                            <td>{{ "%.2f"|format(payment.amount) }}</td>
+                            <td>{{ payment.date.strftime('%Y-%m-%d %H:%M') }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <h4>تقرير الزبائن</h4>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>الاسم</th>
+                            <th>قيمة الدفع</th>
+                            <th>المجموع الكلي</th>
+                            <th>الحالة</th>
+                            <th>المستخدم</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for customer in customers %}
+                        <tr>
+                            <td>{{ customer.name }}</td>
+                            <td>{{ "%.2f"|format(customer.payment_value) }}</td>
+                            <td>{{ "%.2f"|format(customer.total_sum) }}</td>
+                            <td>
+                                {% if customer.status == 'active' %}
+                                <span class="badge bg-success">نشط</span>
+                                {% else %}
+                                <span class="badge bg-secondary">منتهي</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ customer.user.username }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <h4>تقرير المستخدمين</h4>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>المستخدم</th>
+                            <th>إجمالي الدفعات</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user, total in user_totals %}
+                        <tr>
+                            <td>{{ user.username }}</td>
+                            <td>{{ "%.2f"|format(total) }}</td>
+                            <td>
+                                <a href="{{ url_for('main.user_detail', id=user.id) }}" class="btn btn-sm btn-info"><i class="fas fa-eye"></i> عرض</a>
+                                <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editDeliveryModal{{ user.id }}"><i class="fas fa-edit"></i> تعديل</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% for user, total in user_totals %}
+<!-- Edit Delivery Modal -->
+<div class="modal fade" id="editDeliveryModal{{ user.id }}" tabindex="-1" aria-labelledby="editDeliveryModalLabel{{ user.id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editDeliveryModalLabel{{ user.id }}">تعديل مبلغ التسليم لـ {{ user.username }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" action="{{ url_for('main.update_delivery', user_id=user.id) }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="amount{{ user.id }}" class="form-label">مبلغ الدفعة</label>
+                        <input type="number" step="0.01" class="form-control" id="amount{{ user.id }}" name="amount" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="date{{ user.id }}" class="form-label">التاريخ</label>
+                        <input type="date" class="form-control" id="date{{ user.id }}" name="date">
+                    </div>
+                    <div class="mb-3">
+                        <label for="deliverer_name{{ user.id }}" class="form-label">اسم المسلم</label>
+                        <input type="text" class="form-control" id="deliverer_name{{ user.id }}" name="deliverer_name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="notes{{ user.id }}" class="form-label">ملاحظات</label>
+                        <textarea class="form-control" id="notes{{ user.id }}" name="notes"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                    <button type="submit" class="btn btn-primary">حفظ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

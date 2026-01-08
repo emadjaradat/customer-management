@@ -1,0 +1,8 @@
+- [ ] Install PyInstaller and required dependencies
+- [ ] Modify run.py for production mode (remove debug, set host to 0.0.0.0)
+- [ ] Create PyInstaller spec file (app.spec) to bundle the app
+- [ ] Build the single executable (.exe) using PyInstaller
+- [ ] Create a batch script for easy execution
+- [ ] Set up as Windows service for server deployment using NSSM
+- [ ] Test the exe on Windows PC
+- [ ] Verify compatibility on servers and WinBox environments
