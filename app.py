@@ -24,28 +24,8 @@ def load_user(user_id):
 
 app.register_blueprint(main)
 
-
-def create_default_admin():
-    from models import User
-    from werkzeug.security import generate_password_hash
-
-    if not User.query.filter_by(username='admin').first():
-        hashed_password = generate_password_hash('admin123')
-        admin = User(
-            username='admin',
-            name='مدير النظام',
-            password=hashed_password,
-            role='manager'
-        )
-        db.session.add(admin)
-        db.session.commit()
-        print("Default admin created")
-
-
+# هذا الجزء فقط للتشغيل المحلي
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
-        create_default_admin()
-
-    port = int(os.environ.get("PORT", 5050))
-    app.run(host="0.0.0.0", port=port)
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5050)))
