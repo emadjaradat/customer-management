@@ -6,7 +6,12 @@ from routes import main
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key_here'
 import os
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/customers.db'
+
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+
+app.config['SQLALCHEMY_DATABASE_URI'] = \
+    'sqlite:///' + os.path.join(BASE_DIR, 'database.db')
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
