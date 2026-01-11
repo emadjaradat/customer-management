@@ -3,4 +3,3 @@ Flask-Login
 Flask-SQLAlchemy
 Werkzeug
 gunicorn
-gunicorn==23.0.0
