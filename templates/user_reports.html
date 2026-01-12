@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}تقاريري{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-chart-bar"></i> تقاريري</h3>
+                <a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary float-end"><i class="fas fa-arrow-left"></i> العودة</a>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card bg-info text-white">
+                            <div class="card-body">
+                                <h5 class="card-title">زبائني</h5>
+                                <p class="card-text">{{ customers|length }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card bg-success text-white">
+                            <div class="card-body">
+                                <h5 class="card-title">إجمالي الإيرادات</h5>
+                                <p class="card-text">{{ "%.2f"|format(total_revenue) }} شيكل</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <h4>تقرير المدفوعات</h4>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>الزبون</th>
+                            <th>المبلغ</th>
+                            <th>التاريخ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for payment in payments %}
+                        <tr>
+                            <td>{{ payment.customer.name }}</td>
+                            <td>{{ "%.2f"|format(payment.amount) }}</td>
+                            <td>{{ payment.date.strftime('%Y-%m-%d %H:%M') }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <h4>تقرير دفعاتي</h4>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>المبلغ</th>
+                            <th>التاريخ</th>
+                            <th>اسم المسلم</th>
+                            <th>ملاحظات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user_payment in user_payments %}
+                        <tr>
+                            <td>{{ "%.2f"|format(user_payment.amount) }}</td>
+                            <td>{{ user_payment.date.strftime('%Y-%m-%d %H:%M') }}</td>
+                            <td>{{ user_payment.deliverer_name }}</td>
+                            <td>{{ user_payment.notes }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <h4>تقرير زبائني</h4>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>الاسم</th>
+                            <th>قيمة الدفع</th>
+                            <th>المجموع الكلي</th>
+                            <th>الحالة</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for customer in customers %}
+                        <tr>
+                            <td>{{ customer.name }}</td>
+                            <td>{{ "%.2f"|format(customer.payment_value) }}</td>
+                            <td>{{ "%.2f"|format(customer.total_sum) }}</td>
+                            <td>
+                                {% if customer.status == 'active' %}
+                                <span class="badge bg-success">نشط</span>
+                                {% else %}
+                                <span class="badge bg-secondary">منتهي</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

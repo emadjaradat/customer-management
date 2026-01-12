@@ -1,0 +1,77 @@
+body {
+    background: linear-gradient(to bottom, #c2b7f3, #d8c6df);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.navbar-brand {
+    font-weight: bold;
+}
+
+.custom-navbar {
+    height: 70px;
+    background: linear-gradient(90deg, #343a40, #495057);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.custom-brand {
+    font-size: 1.5rem;
+    padding-top: 10px;
+}
+
+.custom-nav-link {
+    padding: 15px 20px;
+    transition: background-color 0.3s ease;
+}
+
+.custom-nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+}
+
+.custom-username {
+    padding: 15px 20px;
+    color: #ffffff !important;
+}
+
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    background-color: #f8f9fa;
+}
+
+.card-header {
+    background-color: #343a40;
+    color: white;
+    border-radius: 10px 10px 0 0 !important;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+.table th {
+    background-color: #f8f9fa;
+    border-top: none;
+}
+
+.alert {
+    border-radius: 5px;
+}
+
+.float-end {
+    float: right !important;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+}
